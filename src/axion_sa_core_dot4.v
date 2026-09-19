@@ -19,7 +19,7 @@ module axion_sa_core_dot4 (
     //   1. register the four multiplier outputs
     //   2. reduce the four products into one DOT4 value
     //   3. accumulate the registered DOT4 value
-    // This keeps the 20 MHz target viable at the GF180 slow corner while
+    // This keeps the 16 MHz signoff target viable at the GF180 slow corner while
     // retaining a throughput of one DOT4 operation per clock.
     reg signed [15:0] p0_pipe;
     reg signed [15:0] p1_pipe;
@@ -53,23 +53,13 @@ module axion_sa_core_dot4 (
     always @(posedge clk) begin
         if (!rst_n) begin
             acc           <= 32'sd0;
-            p0_pipe       <= 16'sd0;
-            p1_pipe       <= 16'sd0;
-            p2_pipe       <= 16'sd0;
-            p3_pipe       <= 16'sd0;
             product_valid <= 1'b0;
-            dot_pipe      <= 32'sd0;
             dot_valid     <= 1'b0;
         end
         else if (ena) begin
             if (clear_acc) begin
                 acc           <= 32'sd0;
-                p0_pipe       <= 16'sd0;
-                p1_pipe       <= 16'sd0;
-                p2_pipe       <= 16'sd0;
-                p3_pipe       <= 16'sd0;
                 product_valid <= 1'b0;
-                dot_pipe      <= 32'sd0;
                 dot_valid     <= 1'b0;
             end else begin
                 if (dot_valid)

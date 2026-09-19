@@ -12,11 +12,11 @@ upgrading the original single-lane experiment to four parallel INT8 lanes.
 - Four signed INT8 multipliers in the SA-Core
 - Shared multiplier bank for V-Core MUL-low and SA-Core DOT4
 - DOT4 multiply-accumulate into a signed 32-bit accumulator
-- Three-stage multiply/reduce/accumulate pipeline for the 20 MHz timing target
+- Three-stage multiply/reduce/accumulate pipeline for the 16 MHz signoff target
 - ReLU and signed INT8 saturation
 - Full 32-bit accumulator byte readback
 - Built-in self-test using the real ADD and DOT4 datapaths
-- 20 MHz implementation target, with 10 MHz as the conservative bring-up rate
+- 16 MHz implementation target, with 10 MHz as the conservative bring-up rate
 - Tiny Tapeout GF180 `1x2` tile target
 
 The project is not a complete GPU. It validates the parallel arithmetic,

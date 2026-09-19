@@ -7,7 +7,8 @@
 2. Send `3E`; expect version byte `A0`.
 3. Send `50`, return the command to `00`, wait three rising edges, then send
    `3D`; expect `A5`.
-4. Increase the clock to 10MHz and repeat. Test 20MHz only after 10MHz passes.
+4. Increase the clock to 10MHz and repeat, then test the signed-off 16MHz rate.
+   Treat 20MHz only as optional characterization, not as a guaranteed rate.
 
 ## Manual vector test
 

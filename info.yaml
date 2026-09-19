@@ -5,7 +5,7 @@ project:
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "Four-lane SIMD V-Core and signed INT8 DOT4 SA-Core prototype"
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     20000000
+  clock_hz:     16000000
 
   # How many tiles your design occupies? A single tile is about 340x160 uM.
   tiles: "1x2"

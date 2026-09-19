@@ -10,6 +10,15 @@ module axion_gen0p (
     output reg  [7:0] data_out
 );
 
+    // Register the external reset once before distributing it through the
+    // compute block. This prevents the Tiny Tapeout reset pin from becoming a
+    // high-fanout synchronous data path. Hold rst_n low for at least two clocks.
+    reg reset_active;
+    always @(posedge clk)
+        reset_active <= !rst_n;
+
+    wire core_rst_n = !reset_active;
+
     localparam [7:0] CMD_LOAD_A0    = 8'h10;
     localparam [7:0] CMD_LOAD_A3    = 8'h13;
     localparam [7:0] CMD_LOAD_B0    = 8'h14;
@@ -79,7 +88,7 @@ module axion_gen0p (
 
     axion_sa_core_dot4 u_sa_core (
         .clk         (clk),
-        .rst_n       (rst_n),
+        .rst_n       (core_rst_n),
         .ena         (ena),
         .clear_acc   (clear_acc),
         .mac_en      (mac_en),
@@ -92,7 +101,7 @@ module axion_gen0p (
     );
 
     always @(posedge clk) begin
-        if (!rst_n) begin
+        if (!core_rst_n) begin
             a_vec         <= 32'h00000000;
             b_vec         <= 32'h00000000;
             vector_result <= 32'h00000000;
