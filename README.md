@@ -43,6 +43,10 @@ make
 GitHub Actions run RTL tests and the official Tiny Tapeout GF180 GDS,
 precheck, gate-level test and viewer flow.
 
+Design commit `5adb9a4` passed RTL, GDS, gate-level, precheck, DRC, LVS and
+16 MHz multi-corner timing verification. See [BUILD_STATUS.md](BUILD_STATUS.md)
+for the measured results and workflow links.
+
 ## Source files
 
 - `src/project.v` — Tiny Tapeout wrapper

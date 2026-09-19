@@ -29,9 +29,10 @@ AXION Gen0-P는 기존 단일 Lane 실험을 4-Lane 병렬 연산 구조로 확�
 
 ## 상태
 
-현재 프로젝트는 RTL과 검증 환경을 구현한 Gen0-P 개발본입니다. 실제
-제작 후보가 되려면 GitHub Actions에서 RTL, GDS, Precheck, Gate-Level,
-DRC/LVS, 면적 및 타이밍 검증을 모두 통과해야 합니다.
+설계 커밋 `5adb9a4`는 GitHub Actions에서 RTL, GDS, Precheck,
+Gate-Level, DRC/LVS, 1×2 면적 및 16MHz 멀티 코너 타이밍 검증을 모두
+통과했습니다. 측정 결과와 실행 링크는 `BUILD_STATUS.md`에 정리되어
+있습니다. 실제 Tiny Tapeout 제작 주문과 결제는 아직 진행하지 않았습니다.
 
 자세한 명령은 `ARCHITECTURE.md`, 실물 테스트는 `HARDWARE_TEST.md`를
 참조하십시오.

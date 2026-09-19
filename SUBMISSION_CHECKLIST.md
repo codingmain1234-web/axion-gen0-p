@@ -13,15 +13,19 @@
 
 ## Required before ordering silicon
 
-- [ ] Push this directory as its own GitHub repository
-- [ ] GitHub RTL/cocotb workflow passes
-- [ ] Official Tiny Tapeout TTGF26c GDS build passes
-- [ ] Design fits the requested GF180 `1x2` tile
-- [ ] Static timing passes at the 16 MHz target
-- [ ] Tiny Tapeout precheck passes
-- [ ] Gate-level cocotb test passes
-- [ ] DRC/LVS and generated GDS reports are clean
-- [ ] GDS viewer inspection is complete
-- [ ] Start post-silicon bring-up below 10 MHz before testing 16 MHz
+- [x] Push this directory as its own GitHub repository
+- [x] GitHub RTL/cocotb workflow passes
+- [x] Official Tiny Tapeout TTGF26c GDS build passes
+- [x] Design fits the requested GF180 `1x2` tile
+- [x] Static timing passes at the 16 MHz target
+- [x] Tiny Tapeout precheck passes
+- [x] Gate-level cocotb test passes
+- [x] DRC/LVS and generated GDS reports are clean
+- [x] GDS viewer inspection is complete
 
-Do not place a fabrication order while any required item above remains open.
+Verified on 2026-09-19 using GitHub Actions run `35423530614` for design
+commit `5adb9a4`. See `BUILD_STATUS.md` for the measured results.
+
+## After silicon arrives
+
+- [ ] Start post-silicon bring-up below 10 MHz before testing 16 MHz

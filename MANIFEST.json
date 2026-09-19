@@ -1,6 +1,6 @@
 {
   "project": "AXION Gen0-P",
-  "version": "0.3-development",
+  "version": "0.3",
   "top_module": "tt_um_codingmain1234_web_axion_gen0p",
   "target": "Tiny Tapeout TTGF26c / gf180mcuD",
   "tiles": "1x2",
