@@ -5,7 +5,7 @@
 1. Start with a slow clock, assert `rst_n=0` for at least two rising edges,
    release reset, and confirm `uo_out=0`, `uio_out=0`, `uio_oe=0`.
 2. Send `3E`; expect version byte `A0`.
-3. Send `50`, return the command to `00`, wait two rising edges, then send
+3. Send `50`, return the command to `00`, wait three rising edges, then send
    `3D`; expect `A5`.
 4. Increase the clock to 10MHz and repeat. Test 20MHz only after 10MHz passes.
 
@@ -17,7 +17,8 @@ for one rising edge.
 
 - Send `20`, then read with `30`–`33`: expect `[6,8,10,12]`.
 - Send `22`, then read with `30`–`33`: expect `[5,12,21,32]`.
-- Send `40` followed by `28`: expect ReLU output 70.
+- Send `40` followed by `28`, return to `00`, and wait two more rising edges:
+  expect ReLU output 70.
 - Read `38`–`3B`: expect `[46,00,00,00]` in hexadecimal.
 
 ## Signed and saturation tests

@@ -8,14 +8,17 @@ same bytes as signed two's-complement INT8 values.
 
 ```text
 A0..A3 ─> 4 shared signed multipliers ─┬─> low bytes ─> SIMD MUL result
-B0..B3 ────────────────────────────────┴─> adder tree ─> pipeline register
-                                                        └─> 32-bit accumulator
-                                                            └─> ReLU/saturate
+B0..B3 ────────────────────────────────┴─> product registers
+                                           └─> adder tree / DOT4 register
+                                               └─> 32-bit accumulator
+                                                   └─> ReLU/saturate
 ```
 
 The four multipliers are physically shared by V-Core MUL-low and SA-Core
-DOT4. DOT4 uses a one-stage registered sum before accumulation, preserving a
-one-result-per-clock pipeline throughput while shortening the critical path.
+DOT4. The SA-Core registers multiplier outputs, the reduced DOT4 sum and the
+accumulator in separate stages. Once full, the pipeline accepts one DOT4 per
+clock; a single command becomes visible in the accumulator after three rising
+edges.
 
 ## Command map
 

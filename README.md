@@ -12,7 +12,7 @@ upgrading the original single-lane experiment to four parallel INT8 lanes.
 - Four signed INT8 multipliers in the SA-Core
 - Shared multiplier bank for V-Core MUL-low and SA-Core DOT4
 - DOT4 multiply-accumulate into a signed 32-bit accumulator
-- Registered DOT4 pipeline for the 20 MHz timing target
+- Three-stage multiply/reduce/accumulate pipeline for the 20 MHz timing target
 - ReLU and signed INT8 saturation
 - Full 32-bit accumulator byte readback
 - Built-in self-test using the real ADD and DOT4 datapaths

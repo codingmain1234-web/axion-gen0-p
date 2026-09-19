@@ -62,6 +62,11 @@ async def pulse_command(dut, command, data=0):
     dut.uio_in.value = 0
     await RisingEdge(dut.clk)
     await Timer(1, unit="ns")
+    # DOT4 is multiply/reduce/accumulate pipelined. One more idle edge makes
+    # the newly accumulated value visible to software.
+    if command == CMD_DOT4_MAC:
+        await RisingEdge(dut.clk)
+        await Timer(1, unit="ns")
 
 
 async def load_vectors(dut, a_values, b_values):

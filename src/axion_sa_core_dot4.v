@@ -15,16 +15,26 @@ module axion_sa_core_dot4 (
     output wire [7:0]         relu_sat
 );
 
-    wire signed [31:0] p0_ext = {{16{p0[15]}}, p0};
-    wire signed [31:0] p1_ext = {{16{p1[15]}}, p1};
-    wire signed [31:0] p2_ext = {{16{p2[15]}}, p2};
-    wire signed [31:0] p3_ext = {{16{p3[15]}}, p3};
-
-    wire signed [31:0] dot_sum = (p0_ext + p1_ext) +
-                                 (p2_ext + p3_ext);
-
+    // Three-stage MAC pipeline:
+    //   1. register the four multiplier outputs
+    //   2. reduce the four products into one DOT4 value
+    //   3. accumulate the registered DOT4 value
+    // This keeps the 20 MHz target viable at the GF180 slow corner while
+    // retaining a throughput of one DOT4 operation per clock.
+    reg signed [15:0] p0_pipe;
+    reg signed [15:0] p1_pipe;
+    reg signed [15:0] p2_pipe;
+    reg signed [15:0] p3_pipe;
+    reg               product_valid;
     reg signed [31:0] dot_pipe;
     reg               dot_valid;
+
+    wire signed [31:0] p0_pipe_ext = {{16{p0_pipe[15]}}, p0_pipe};
+    wire signed [31:0] p1_pipe_ext = {{16{p1_pipe[15]}}, p1_pipe};
+    wire signed [31:0] p2_pipe_ext = {{16{p2_pipe[15]}}, p2_pipe};
+    wire signed [31:0] p3_pipe_ext = {{16{p3_pipe[15]}}, p3_pipe};
+    wire signed [31:0] piped_dot_sum = (p0_pipe_ext + p1_pipe_ext) +
+                                       (p2_pipe_ext + p3_pipe_ext);
 
     function [7:0] sat_relu8;
         input signed [31:0] value;
@@ -42,22 +52,40 @@ module axion_sa_core_dot4 (
 
     always @(posedge clk) begin
         if (!rst_n) begin
-            acc <= 32'sd0;
-            dot_pipe  <= 32'sd0;
-            dot_valid <= 1'b0;
+            acc           <= 32'sd0;
+            p0_pipe       <= 16'sd0;
+            p1_pipe       <= 16'sd0;
+            p2_pipe       <= 16'sd0;
+            p3_pipe       <= 16'sd0;
+            product_valid <= 1'b0;
+            dot_pipe      <= 32'sd0;
+            dot_valid     <= 1'b0;
         end
         else if (ena) begin
             if (clear_acc) begin
-                acc <= 32'sd0;
-                dot_pipe  <= 32'sd0;
-                dot_valid <= 1'b0;
+                acc           <= 32'sd0;
+                p0_pipe       <= 16'sd0;
+                p1_pipe       <= 16'sd0;
+                p2_pipe       <= 16'sd0;
+                p3_pipe       <= 16'sd0;
+                product_valid <= 1'b0;
+                dot_pipe      <= 32'sd0;
+                dot_valid     <= 1'b0;
             end else begin
                 if (dot_valid)
                     acc <= acc + dot_pipe;
 
-                dot_valid <= mac_en;
-                if (mac_en)
-                    dot_pipe <= dot_sum;
+                dot_valid <= product_valid;
+                if (product_valid)
+                    dot_pipe <= piped_dot_sum;
+
+                product_valid <= mac_en;
+                if (mac_en) begin
+                    p0_pipe <= p0;
+                    p1_pipe <= p1;
+                    p2_pipe <= p2;
+                    p3_pipe <= p3;
+                end
             end
         end
     end

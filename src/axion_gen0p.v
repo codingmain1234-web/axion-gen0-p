@@ -38,13 +38,13 @@ module axion_gen0p (
     reg [31:0] vector_result;
     reg [2:0]  read_mode;
     reg [1:0]  read_index;
-    reg [1:0]  bist_state;
+    reg [2:0]  bist_state;
     reg [7:0]  bist_status;
 
     wire vector_execute = (command >= CMD_VEC_ADD) &&
                           (command <= CMD_VEC_MIN) &&
-                          (bist_state == 2'd0);
-    wire [2:0] alu_op = (bist_state == 2'd1) ? 3'd0 : command[2:0];
+                          (bist_state == 3'd0);
+    wire [2:0] alu_op = (bist_state == 3'd1) ? 3'd0 : command[2:0];
     wire [31:0] vector_y;
     wire [31:0] mul_low_vec;
     wire signed [15:0] product0;
@@ -71,9 +71,9 @@ module axion_gen0p (
     );
 
     wire clear_acc = (command == CMD_CLEAR_ACC) ||
-                     ((command == CMD_SELF_TEST) && (bist_state == 2'd0));
-    wire mac_en = ((command == CMD_DOT4_MAC) && (bist_state == 2'd0)) ||
-                  (bist_state == 2'd1);
+                     ((command == CMD_SELF_TEST) && (bist_state == 3'd0));
+    wire mac_en = ((command == CMD_DOT4_MAC) && (bist_state == 3'd0)) ||
+                  (bist_state == 3'd1);
     wire signed [31:0] sa_acc;
     wire [7:0] sa_relu_sat;
 
@@ -98,23 +98,27 @@ module axion_gen0p (
             vector_result <= 32'h00000000;
             read_mode     <= READ_VECTOR;
             read_index    <= 2'd0;
-            bist_state    <= 2'd0;
+            bist_state    <= 3'd0;
             bist_status   <= 8'h00;
         end else if (ena) begin
-            if (bist_state == 2'd1) begin
+            if (bist_state == 3'd1) begin
                 // Exercise the real ADD and DOT4 datapaths.
                 vector_result <= vector_y;
-                bist_state    <= 2'd2;
-            end else if (bist_state == 2'd2) begin
-                // Allow the registered DOT4 result to enter the accumulator.
-                bist_state <= 2'd3;
-            end else if (bist_state == 2'd3) begin
+                bist_state    <= 3'd2;
+            end else if (bist_state == 3'd2) begin
+                // Multiplier outputs enter the product pipeline registers.
+                bist_state <= 3'd3;
+            end else if (bist_state == 3'd3) begin
+                // The product reduction enters the DOT4 pipeline register.
+                bist_state <= 3'd4;
+            end else if (bist_state == 3'd4) begin
+                // The registered DOT4 value has entered the accumulator.
                 if ((sa_acc == 32'sd70) &&
                     (vector_result == 32'h0c0a0806))
                     bist_status <= 8'ha5;
                 else
                     bist_status <= 8'h5a;
-                bist_state <= 2'd0;
+                bist_state <= 3'd0;
                 read_mode  <= READ_BIST;
             end else begin
                 if ((command >= CMD_LOAD_A0) && (command <= CMD_LOAD_A3)) begin
@@ -155,7 +159,7 @@ module axion_gen0p (
                     a_vec       <= 32'h04030201;
                     b_vec       <= 32'h08070605;
                     bist_status <= 8'h01;
-                    bist_state  <= 2'd1;
+                    bist_state  <= 3'd1;
                     read_mode   <= READ_BIST;
                 end
             end
