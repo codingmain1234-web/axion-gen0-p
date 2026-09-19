@@ -7,25 +7,13 @@ module axion_sa_core_dot4 (
     input  wire               ena,
     input  wire               clear_acc,
     input  wire               mac_en,
-    input  wire [31:0]        a_vec,
-    input  wire [31:0]        b_vec,
+    input  wire signed [15:0] p0,
+    input  wire signed [15:0] p1,
+    input  wire signed [15:0] p2,
+    input  wire signed [15:0] p3,
     output reg  signed [31:0] acc,
     output wire [7:0]         relu_sat
 );
-
-    wire signed [7:0] a0 = a_vec[7:0];
-    wire signed [7:0] a1 = a_vec[15:8];
-    wire signed [7:0] a2 = a_vec[23:16];
-    wire signed [7:0] a3 = a_vec[31:24];
-    wire signed [7:0] b0 = b_vec[7:0];
-    wire signed [7:0] b1 = b_vec[15:8];
-    wire signed [7:0] b2 = b_vec[23:16];
-    wire signed [7:0] b3 = b_vec[31:24];
-
-    wire signed [15:0] p0 = a0 * b0;
-    wire signed [15:0] p1 = a1 * b1;
-    wire signed [15:0] p2 = a2 * b2;
-    wire signed [15:0] p3 = a3 * b3;
 
     wire signed [31:0] p0_ext = {{16{p0[15]}}, p0};
     wire signed [31:0] p1_ext = {{16{p1[15]}}, p1};
@@ -35,7 +23,8 @@ module axion_sa_core_dot4 (
     wire signed [31:0] dot_sum = (p0_ext + p1_ext) +
                                  (p2_ext + p3_ext);
 
-    wire signed [31:0] acc_after_mac = acc + dot_sum;
+    reg signed [31:0] dot_pipe;
+    reg               dot_valid;
 
     function [7:0] sat_relu8;
         input signed [31:0] value;
@@ -52,13 +41,24 @@ module axion_sa_core_dot4 (
     assign relu_sat = sat_relu8(acc);
 
     always @(posedge clk) begin
-        if (!rst_n)
+        if (!rst_n) begin
             acc <= 32'sd0;
+            dot_pipe  <= 32'sd0;
+            dot_valid <= 1'b0;
+        end
         else if (ena) begin
-            if (clear_acc)
+            if (clear_acc) begin
                 acc <= 32'sd0;
-            else if (mac_en)
-                acc <= acc_after_mac;
+                dot_pipe  <= 32'sd0;
+                dot_valid <= 1'b0;
+            end else begin
+                if (dot_valid)
+                    acc <= acc + dot_pipe;
+
+                dot_valid <= mac_en;
+                if (mac_en)
+                    dot_pipe <= dot_sum;
+            end
         end
     end
 

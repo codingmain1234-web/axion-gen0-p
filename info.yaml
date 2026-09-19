@@ -19,6 +19,7 @@ project:
   source_files:
     - "project.v"
     - "axion_gen0p.v"
+    - "axion_mul4_shared.v"
     - "axion_vcore_simd4.v"
     - "axion_sa_core_dot4.v"
 

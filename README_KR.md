@@ -9,7 +9,9 @@ AXION Gen0-P는 기존 단일 Lane 실험을 4-Lane 병렬 연산 구조로 확�
 - 4-Lane SIMD8 V-Core
 - ADD, SUB, MUL 하위 8비트, AND, XOR, unsigned MAX/MIN
 - Signed INT8 곱셈기 4개
+- V-Core MUL과 SA-Core DOT4가 공유하는 곱셈기 뱅크
 - 한 클럭에 DOT4 MAC 1회
+- 20MHz 타이밍을 위한 DOT4 파이프라인
 - Signed 32비트 누산기
 - ReLU와 INT8 Saturation
 - 누산기 32비트 전체 읽기

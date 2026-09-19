@@ -46,12 +46,28 @@ module axion_gen0p (
                           (bist_state == 2'd0);
     wire [2:0] alu_op = (bist_state == 2'd1) ? 3'd0 : command[2:0];
     wire [31:0] vector_y;
+    wire [31:0] mul_low_vec;
+    wire signed [15:0] product0;
+    wire signed [15:0] product1;
+    wire signed [15:0] product2;
+    wire signed [15:0] product3;
+
+    axion_mul4_shared u_mul4 (
+        .a_vec       (a_vec),
+        .b_vec       (b_vec),
+        .p0          (product0),
+        .p1          (product1),
+        .p2          (product2),
+        .p3          (product3),
+        .mul_low_vec (mul_low_vec)
+    );
 
     axion_vcore_simd4 u_vcore (
-        .a_vec(a_vec),
-        .b_vec(b_vec),
-        .op   (alu_op),
-        .y_vec(vector_y)
+        .a_vec       (a_vec),
+        .b_vec       (b_vec),
+        .mul_low_vec (mul_low_vec),
+        .op          (alu_op),
+        .y_vec       (vector_y)
     );
 
     wire clear_acc = (command == CMD_CLEAR_ACC) ||
@@ -67,10 +83,12 @@ module axion_gen0p (
         .ena         (ena),
         .clear_acc   (clear_acc),
         .mac_en      (mac_en),
-        .a_vec       (a_vec),
-        .b_vec       (b_vec),
-        .acc      (sa_acc),
-        .relu_sat (sa_relu_sat)
+        .p0          (product0),
+        .p1          (product1),
+        .p2          (product2),
+        .p3          (product3),
+        .acc         (sa_acc),
+        .relu_sat    (sa_relu_sat)
     );
 
     always @(posedge clk) begin
@@ -88,6 +106,9 @@ module axion_gen0p (
                 vector_result <= vector_y;
                 bist_state    <= 2'd2;
             end else if (bist_state == 2'd2) begin
+                // Allow the registered DOT4 result to enter the accumulator.
+                bist_state <= 2'd3;
+            end else if (bist_state == 2'd3) begin
                 if ((sa_acc == 32'sd70) &&
                     (vector_result == 32'h0c0a0806))
                     bist_status <= 8'ha5;
