@@ -1,0 +1,59 @@
+# Tiny Tapeout project information
+project:
+  title:        "AXION Gen0-P"
+  author:       "codingmain1234-web"
+  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
+  description:  "Four-lane SIMD V-Core and signed INT8 DOT4 SA-Core prototype"
+  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
+  clock_hz:     20000000
+
+  # How many tiles your design occupies? A single tile is about 340x160 uM.
+  tiles: "1x2"
+
+  # Your top module name must start with "tt_um_". Make it unique by including your github username:
+  top_module:  "tt_um_codingmain1234_web_axion_gen0p"
+
+  # List your project's source files here.
+  # Source files must be in ./src and you must list each source file separately, one per line.
+  # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
+  source_files:
+    - "project.v"
+    - "axion_gen0p.v"
+    - "axion_vcore_simd4.v"
+    - "axion_sa_core_dot4.v"
+
+# The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
+# This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
+pinout:
+  # Inputs
+  ui[0]: "DATA_IN[0]"
+  ui[1]: "DATA_IN[1]"
+  ui[2]: "DATA_IN[2]"
+  ui[3]: "DATA_IN[3]"
+  ui[4]: "DATA_IN[4]"
+  ui[5]: "DATA_IN[5]"
+  ui[6]: "DATA_IN[6]"
+  ui[7]: "DATA_IN[7]"
+
+  # Outputs
+  uo[0]: "DATA_OUT[0]"
+  uo[1]: "DATA_OUT[1]"
+  uo[2]: "DATA_OUT[2]"
+  uo[3]: "DATA_OUT[3]"
+  uo[4]: "DATA_OUT[4]"
+  uo[5]: "DATA_OUT[5]"
+  uo[6]: "DATA_OUT[6]"
+  uo[7]: "DATA_OUT[7]"
+
+  # Bidirectional pins
+  uio[0]: "COMMAND[0]"
+  uio[1]: "COMMAND[1]"
+  uio[2]: "COMMAND[2]"
+  uio[3]: "COMMAND[3]"
+  uio[4]: "COMMAND[4]"
+  uio[5]: "COMMAND[5]"
+  uio[6]: "COMMAND[6]"
+  uio[7]: "COMMAND[7]"
+
+# Do not change!
+yaml_version: 6
